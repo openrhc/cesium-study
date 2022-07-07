@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import * as Cesium from 'cesium'
 import { onMounted, ref } from 'vue'
+import { addWallGraphics, addLabel } from '@/demo/entities'
+import { addPickEvent } from '@/demo/Event'
+
 const container = ref()
 
-const viewer = ref<Cesium.Viewer>()
+onMounted(() => InitMap())
 
-onMounted(() => {
-  const _viewer = new Cesium.Viewer(container.value, {
+/**
+ * 初始化地图
+ */
+function InitMap() {
+  const viewer = new Cesium.Viewer(container.value, {
     animation: false, // 动画小组件
     baseLayerPicker: false, // 底图组件，选择三维数字地球的底图（imagery and terrain）。
     fullscreenButton: false, // 全屏组件
@@ -19,10 +25,19 @@ onMounted(() => {
     timeline: false, // 时间轴
     navigationHelpButton: false, // 帮助提示，如何操作数字地球。
   })
-  ;(_viewer as any)._cesiumWidget._creditContainer.style.display = 'none'
-  viewer.value = _viewer
+  ;(viewer as any)._cesiumWidget._creditContainer.style.display = 'none'
   window.viewer = viewer
-})
+
+  addWallGraphics(viewer)
+  const labelEntity = addLabel(viewer)
+  addPickEvent(viewer, ({ cartesian, longitude, latitude }) => {
+    labelEntity.position = cartesian
+    if (labelEntity.label) {
+      labelEntity.label.show = true
+      labelEntity.label.text = `Lon:${longitude}\nLat:${latitude}`
+    }
+  })
+}
 </script>
 
 <template>
