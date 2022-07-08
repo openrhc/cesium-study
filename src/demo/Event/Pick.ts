@@ -35,6 +35,26 @@ export function addPickEvent(
   )
 }
 
+export function addClickEvent(
+  viewer: Cesium.Viewer,
+  cb?: ({}: Record<string, any>) => void
+) {
+  viewer.screenSpaceEventHandler.setInputAction(
+    (event: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+      const pickedFeature: Cesium.Cesium3DTileFeature = viewer.scene.pick(
+        event.position
+      )
+
+      window.$$pickedFeature = pickedFeature
+      const cartesian3 = viewer.scene.pickPosition(event.position)
+      if (!Cesium.defined(cartesian3)) return
+      const wgs84 = Cartesian3_to_WGS84(cartesian3)
+      console.log(wgs84.longitude, wgs84.latitude)
+    },
+    Cesium.ScreenSpaceEventType.LEFT_CLICK
+  )
+}
+
 /**
  * 笛卡尔空间坐标转WGS84坐标
  * @param point { x: number; y: number; z: number }

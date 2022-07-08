@@ -2,7 +2,8 @@
 import * as Cesium from 'cesium'
 import { onMounted, ref } from 'vue'
 import { addWallGraphics, addLabel } from '@/demo/entities'
-import { addPickEvent } from '@/demo/Event'
+import { addPickEvent, addClickEvent } from '@/demo/Event'
+import { addClassifcationTileset } from '@/demo/3dTileset'
 
 const container = ref()
 
@@ -24,12 +25,20 @@ function InitMap() {
     selectionIndicator: false, //是否显示选取指示器组件
     timeline: false, // 时间轴
     navigationHelpButton: false, // 帮助提示，如何操作数字地球。
+    terrainProvider: Cesium.createWorldTerrain(),
   })
+  // viewer.scene.sun.show = false
+  // viewer.scene.moon.show = false
+
+  viewer.scene.globe.depthTestAgainstTerrain = true
+  // viewer.scene.skyBox.show = false
+  viewer.scene.globe.show = false
   ;(viewer as any)._cesiumWidget._creditContainer.style.display = 'none'
   window.viewer = viewer
 
   addWallGraphics(viewer)
   const labelEntity = addLabel(viewer)
+  addClickEvent(viewer)
   addPickEvent(viewer, ({ cartesian, longitude, latitude }) => {
     labelEntity.position = cartesian
     if (labelEntity.label) {
@@ -37,6 +46,8 @@ function InitMap() {
       labelEntity.label.text = `Lon:${longitude}\nLat:${latitude}`
     }
   })
+
+  addClassifcationTileset(viewer)
 }
 </script>
 

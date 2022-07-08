@@ -1,17 +1,7 @@
-<script setup lang="ts">
-import HelloCesium from './components/HelloCesium.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <HelloCesium />
+  <router-view />
 </template>
 
-<style>
-body {
-  margin: 0;
-}
-#app {
-  width: 100vw;
-  height: 100vh;
-}
-</style>
+<style></style>
